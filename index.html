@@ -23,8 +23,8 @@
 <script>
 /* PublishOS PIN gate — keeps casual visitors out. PIN verified as SHA-256(salt+pin). */
 (function(){
-  var SALT="8e4758ec4d70d981";
-  var HASH="ed0f9ee9700f3ca6b6dd0a03184e6935b12301832b699e9a482c211586dd82f9";
+  var SALT="2a3da2b25c250b7e";
+  var HASH="c0b5630e53ce0d30f20bc3be4c6ec8001d4bf470c81e01cea9f1e9bce23e5ae6";
   function unlock(){
     document.body.classList.remove("locked");
     var g=document.getElementById("gate"); if(g) g.style.display="none";

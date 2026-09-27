@@ -8,7 +8,59 @@
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 </head>
-<body>
+<body class="locked">
+<div id="gate" class="gate" role="dialog" aria-label="PIN lock">
+  <div class="gate-card">
+    <div class="gate-mark">P</div>
+    <div class="gate-title">Publish<span>OS</span></div>
+    <div class="gate-sub">Private — enter your PIN</div>
+    <input id="gate-pin" class="gate-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="••••••" aria-label="PIN">
+    <label class="gate-remember"><input type="checkbox" id="gate-remember"> Remember this device</label>
+    <button class="gate-btn" id="gate-go">Unlock</button>
+    <div class="gate-err" id="gate-err"></div>
+  </div>
+</div>
+<script>
+/* PublishOS PIN gate — keeps casual visitors out. PIN verified as SHA-256(salt+pin). */
+(function(){
+  var SALT="8e4758ec4d70d981";
+  var HASH="ed0f9ee9700f3ca6b6dd0a03184e6935b12301832b699e9a482c211586dd82f9";
+  function unlock(){
+    document.body.classList.remove("locked");
+    var g=document.getElementById("gate"); if(g) g.style.display="none";
+  }
+  try{
+    if(sessionStorage.getItem("publishos.unlocked")==="1"||localStorage.getItem("publishos.trusted")==="1"){unlock();return;}
+  }catch(e){}
+  var fails=0,cooldownUntil=0;
+  function hex(buf){return Array.prototype.map.call(new Uint8Array(buf),function(b){return("0"+b.toString(16)).slice(-2);}).join("");}
+  function safeEq(a,b){if(a.length!==b.length)return false;var d=0;for(var i=0;i<a.length;i++)d|=a.charCodeAt(i)^b.charCodeAt(i);return d===0;}
+  function err(m){document.getElementById("gate-err").textContent=m;}
+  function tryUnlock(){
+    var now=Date.now();
+    if(now<cooldownUntil){err("Too many attempts — wait "+Math.ceil((cooldownUntil-now)/1000)+"s");return;}
+    var pin=document.getElementById("gate-pin").value.trim();
+    if(!/^\d{6}$/.test(pin)){err("Enter the 6-digit PIN");return;}
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(SALT+pin)).then(function(buf){
+      if(safeEq(hex(buf),HASH)){
+        try{
+          sessionStorage.setItem("publishos.unlocked","1");
+          if(document.getElementById("gate-remember").checked)localStorage.setItem("publishos.trusted","1");
+        }catch(e){}
+        unlock();
+      }else{
+        fails++;
+        document.getElementById("gate-pin").value="";
+        if(fails>=5){cooldownUntil=Date.now()+60000;fails=0;err("Too many attempts — locked for 60s");}
+        else err("Wrong PIN ("+(5-fails)+" tries left)");
+      }
+    });
+  }
+  document.getElementById("gate-go").addEventListener("click",tryUnlock);
+  document.getElementById("gate-pin").addEventListener("keydown",function(e){if(e.key==="Enter")tryUnlock();});
+  setTimeout(function(){var p=document.getElementById("gate-pin");if(p)p.focus();},60);
+})();
+</script>
 <div class="shell">
   <header class="topbar">
     <div class="brand">

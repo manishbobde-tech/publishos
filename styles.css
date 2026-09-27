@@ -275,3 +275,23 @@ textarea.input{resize:vertical;min-height:88px}
 .hidden{display:none!important}
 .stat-num{font-size:30px;font-weight:800;letter-spacing:-.5px}
 .stat-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+/* ---------- PIN gate ---------- */
+body.locked .shell{display:none}
+.gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(900px 420px at 50% 18%,rgba(245,165,36,.09),transparent 60%),var(--bg)}
+.gate-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:40px 44px;text-align:center;box-shadow:var(--shadow);width:min(360px,92vw)}
+.gate-mark{width:52px;height:52px;margin:0 auto 14px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:24px;color:#0a0d13;background:linear-gradient(135deg,var(--accent),#ffcf6b)}
+.gate-title{font-size:22px;font-weight:700}
+.gate-title span{color:var(--accent)}
+.gate-sub{color:var(--muted);font-size:13px;margin:6px 0 20px}
+.gate-pin{width:100%;padding:12px 12px 12px 22px;font-size:22px;letter-spacing:10px;text-align:center;color:var(--text);
+  background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;font-family:var(--font)}
+.gate-pin:focus{border-color:var(--accent)}
+.gate-remember{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;margin:14px 0;cursor:pointer}
+.gate-btn{width:100%;padding:12px;border:0;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;
+  color:#0a0d13;background:linear-gradient(135deg,var(--accent),#ffcf6b)}
+.gate-btn:hover{filter:brightness(1.06)}
+.gate-err{color:var(--danger);font-size:13px;min-height:20px;margin-top:12px}
